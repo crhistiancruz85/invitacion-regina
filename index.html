@@ -100,13 +100,46 @@
             width: 20px;
             height: 20px;
         }
+
+ /* Botón flotante para silenciar/reproducir música */
+
+ .btn-audio {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            padding: 12px 20px;
+            background-color: #ffffff;
+            color: #333333;
+            border: 2px solid #d81b60;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0px 5px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-audio:active {
+            transform: scale(0.95);
+        }
+
+
     </style>
 </head>
 <body>
 
-<div class="container">
+<!-- Encabezados del Sitio -->
+
+    <div class="container">
+    <h1>Invitación de Cumpleaños de Regina</h1>
     <div class="instruction">✨ Toca la credencial para voltearla ✨</div>
     
+ <!-- Estructura de la Credencial Interactiva (Frente y Reverso) -->
+
     <div class="card-container" id="invitationCard" onclick="flipCard()">
         <!-- LADO FRONTAL (FRENTE) -->
         <div class="card-face card-front">
@@ -127,6 +160,17 @@
             </svg>
             Ver ubicación en Google Maps
         </a>
+<!-- Elemento del Reproductor de Audio (Oculto) en Bucle Infinito -->
+    <audio id="musica-fondo" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+        Tu navegador no soporta elementos de audio.
+    </audio>
+
+  <!-- Botón Flotante del Reproductor -->
+    <button class="btn-audio" id="control-audio" onclick="toggleMusica(event)">
+        🎵 Reproducir Música
+    </button>
+
     </div>
 </div>
 
@@ -136,6 +180,42 @@
         card.classList.toggle('is-flipped');
     }
 </script>
+
+<script>
+        // Lógica para girar la tarjeta al hacer clic
+        function voltearTarjeta() {
+            const tarjeta = document.getElementById('tarjeta');
+            tarjeta.classList.toggle('volteada');
+        }
+
+        // Lógica para el control del audio
+        const musica = document.getElementById('musica-fondo');
+        const botonAudio = document.getElementById('control-audio');
+
+        // Intenta iniciar la música al primer toque en cualquier parte de la pantalla
+        document.addEventListener('click', () => {
+            if (musica.paused && botonAudio.innerText === "🎵 Reproducir Música") {
+                musica.play().catch(error => {
+                    console.log("La autoreproducción requiere interacción directa con el botón flotante.");
+                });
+                botonAudio.innerHTML = "🔊 Silenciar";
+            }
+        }, { once: true }); // Solo se ejecuta una vez para no interferir después
+
+        // Función del botón flotante (Play / Pause / Silenciar)
+        function toggleMusica(evento) {
+            evento.stopPropagation(); // Evita que la tarjeta se voltee al presionar el botón de música
+            
+            if (musica.paused) {
+                musica.play();
+                botonAudio.innerHTML = "🔊 Silenciar";
+            } else {
+                musica.pause();
+                botonAudio.innerHTML = "🔈 Reproducir";
+            }
+        }
+    </script>
+
 
 </body>
 </html>
